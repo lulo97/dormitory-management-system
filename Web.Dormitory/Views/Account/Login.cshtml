@@ -1,0 +1,59 @@
+﻿@using Web.Dormitory.Models
+@model LoginViewModel
+@{
+    Layout = "~/Views/Shared/AccountLayout.cshtml";
+}
+
+<main>
+    <div class="py-5 bg-light">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card" style="border-radius: 1rem;">
+                    <div class="card-body p-5">
+                        <div class="">
+                            <h2 class="fw-bold text-uppercase text-center">Login</h2>
+
+                            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                <div class="form-outline form-white mb-4">
+                                    <label class="form-label" for="typeEmailX">Email</label>
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-lg", id = "typeEmailX" })
+
+                                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-outline form-white mb-4">
+                                    <label class="form-label" for="typePasswordX">Password</label>
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control form-control-lg", id = "typePasswordX" })
+
+                                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                </div>
+
+                                <p class="small"><a class="" href="ForgotPassword">Forgot password?</a></p>
+
+                                <button class="btn btn-outline-dark btn-lg px-5" type="submit">Login</button>
+                            }
+
+                            <div class="d-flex justify-content-center text-center pt-1">
+                                <a href="#!" class=""><i class="fab fa-facebook-f fa-lg"></i></a>
+                                <a href="#!" class=""><i class="fab fa-twitter fa-lg mx-4 px-2"></i></a>
+                                <a href="#!" class=""><i class="fab fa-google fa-lg"></i></a>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="mb-0">Don't have an account? <a href="/Account/Register" class="fw-bold">Sign Up</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

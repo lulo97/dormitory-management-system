@@ -1,0 +1,20 @@
+﻿@{
+    Layout = "~/Views/Shared/DashboardLayout.cshtml";
+}
+
+<script src="~/AngularJS_Code/Role/Utils.js"></script>
+<script src="~/AngularJS_Code/Role/Service.js"></script>
+<script src="~/AngularJS_Code/Role/Controller.js"></script>
+
+<body ng-app="myApp" ng-controller="RoleController">
+    <div class="content-wrapper py-3 px-4">
+        <div class="row d-flex flex-column gap-5">
+            <!-- Role Table -->
+            @{ Html.RenderPartial("~/Views/Role/RoleTable.cshtml"); }
+
+            <!-- User-Role Table -->
+            @{ Html.RenderPartial("~/Views/Role/UserRoleTable.cshtml"); }
+        </div>
+    </div>
+    @{ Html.RenderPartial("~/Views/Role/Modal.cshtml"); }
+</body>

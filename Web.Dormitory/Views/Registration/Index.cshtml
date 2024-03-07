@@ -1,0 +1,152 @@
+﻿@{
+    Layout = "~/Views/Shared/DashboardLayout.cshtml";
+}
+
+@using Microsoft.AspNet.Identity
+
+<script src="~/AngularJS_Code/Registration/Service.js"></script>
+<script src="~/AngularJS_Code/Registration/Controller.js"></script>
+<script src="~/AngularJS_Code/Registration/Utils.js"></script>
+
+<div class="wrapper" ng-app="myApp" ng-controller="RegistrationController">
+    <div class="content-wrapper p-3">
+        <div class="card" ng-show="showAlreadyInRoomWarning">
+            <div class="card-body">
+                <strong>You are already in room {{studentInRoomData.RoomID}} building {{studentInRoomData.BuildingId}}.</strong>
+                <br />
+                Please contact manager if you want to change room.
+            </div>
+        </div>
+        <!--Building Mutiple Select-->
+        <div class="form-group">
+            <div class="dropdown">
+                <button class="custom-select w-25" type="button" id="selectedOptions" data-toggle="dropdown">
+                    {{ getSelectedOptionsText() }}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu w-25" style="max-height: 200px; overflow-y: auto;" aria-labelledby="selectedOptions">
+                    <li>
+                        <a class="dropdown-item" ng-click="toggleSelectAll()">Select All</a>
+                    </li>
+                    <li role="separator" class="dropdown-divider"></li>
+                    <li ng-repeat="option in buildings">
+                        <a class="dropdown-item" ng-click="toggleSelection(option.BuildingName)">
+                            {{ option.BuildingName }}
+                            <span ng-show="isSelected(option)">✓</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Display the list of rooms in a table -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Room Table</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Room ID</th>
+                            <th>Room Name</th>
+                            <th>Building ID</th>
+                            <th>Slot</th>
+                            <th>Max Slot</th>
+                            <th>Room Gender</th>
+                            <th>Price</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="room in roomToShow">
+                            <td>{{ room.RoomID }}</td>
+                            <td>{{ room.RoomName }}</td>
+                            <td>{{ room.BuildingID }}</td>
+                            <td>{{ room.Slot }}</td>
+                            <td>{{ room.MaxSlot }}</td>
+                            <td>{{ room.Room_Gender }}</td>
+                            <td>{{ room.Price }}</td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-block btn-success swalDefaultSuccess"
+                                        ng-disabled="showAlreadyInRoomWarning"
+                                        ng-click="openConfirmBookingForm(room)"
+                                        data-toggle="modal"
+                                        data-target="#myModal">
+                                    Booking
+                                </button>
+                            </td>
+                            <!-- Add more cells as needed -->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer clearfix">
+                <!--
+                Pagination
+                total-items (int) = Số lượng bản ghi cần hiển thị
+                ng-model (int) = Chỉ số của trang hiện tại trong các trang từ 1 tới total-items
+                items-per-page (int) = Số các bản ghi hiển trị trên 1 trang, các bản ghi còn lại nằm ở trang khác
+                -->
+                <ul uib-pagination total-items="totalItems" ng-model="currentPage" items-per-page="itemsPerPage" max-size="5" class="m-0" boundary-link-numbers="true"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Booking Confirm Form</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form ng-submit="">
+                        <dl class="row">
+                            <dt class="col-sm-4">Room ID:</dt>
+                            <dd class="col-sm-8">{{selectedRoom.RoomID}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Room Name:</dt>
+                            <dd class="col-sm-8">{{selectedRoom.RoomName}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Building ID:</dt>
+                            <dd class="col-sm-8">{{selectedRoom.BuildingID}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Slot:</dt>
+                            <dd class="col-sm-8">{{selectedRoom.Slot}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Max Slot:</dt>
+                            <dd class="col-sm-8">{{selectedRoom.MaxSlot}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Room Gender:</dt>
+                            <dd class="col-sm-8">{{selectedRoom.Room_Gender}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Price:</dt>
+                            <dd class="col-sm-8">{{selectedRoom.Price}}</dd>
+                        </dl>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex flex-col w-100 justify-content-between align-items-center">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button"
+                                class="btn btn-success"
+                                data-dismiss="modal"
+                                ng-click="bookRoom(selectedRoom)">
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

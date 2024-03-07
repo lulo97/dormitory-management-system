@@ -1,0 +1,16 @@
+﻿@{
+    Layout = "~/Views/Shared/DashboardLayout.cshtml";
+}
+
+<script src="~/AngularJS_Code/Dashboard/Controller.js"></script>
+
+<div class="wrapper" ng-app="myApp" ng-controller="DashboardController">
+    <div class="content-wrapper p-3">
+        <div class="row">
+            <!--Total of student, manager, room and building-->
+            @{Html.RenderPartial("~/Views/Dashboard/TotalFour.cshtml");}
+        </div>
+
+        @{Html.RenderPartial("~/Views/Dashboard/Calender.cshtml");}
+        </div>
+</div>

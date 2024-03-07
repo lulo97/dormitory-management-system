@@ -1,0 +1,220 @@
+﻿@{
+    Layout = "~/Views/Shared/DashboardLayout.cshtml";
+}
+
+<script>
+    app.controller('StudentInRoomController', function ($scope, $http, $q) {
+        $scope.currentPage = 1;
+        $scope.itemsPerPage = 5;
+
+        // API URL
+        var apiGetAll = 'api/studentinroom/getAll';
+
+        $http.get(apiGetAll)
+            .then(function (response) {
+                $scope.studentinrooms = response.data;
+            })
+            .catch(function (error) {
+                console.error('Error fetching student in rooms:', error);
+            });
+
+        //View Detail Student
+        $scope.getStudentDetails = function (studentID) {
+            return $http.get('/api/studentinroom/getStudentDetails?StudentID=' + studentID)
+                .then(function (response) {
+                    // Handle success, for example, log the response
+                    console.log(response.data);
+                    return response.data;
+                })
+                .catch(function (error) {
+                    // Handle error, for example, log the error
+                    console.error('Error getting student details:', error.data);
+                    throw error; // Rethrow the error to propagate it to the caller
+                });
+        };
+
+        $scope.openModal = function (StudentID) {
+            $scope.getStudentDetails(StudentID)
+                .then(function (studentDetails) {
+                    console.log(studentDetails, StudentID);
+                    $scope.studentDetails = studentDetails;
+                })
+                .catch(function (error) {
+                    // Handle the error if needed
+                    console.error('Error opening modal:', error);
+                });
+        }
+
+        $scope.setWantToDeleteStudentID = function (StudentID) {
+            $scope.WantToDeleteStudentID = StudentID;
+        }
+
+        // Delete
+        $scope.deleteStudentInRoom = function (studentID) {
+            showToast("success", "Success!", 'Delete student in room successfully!')
+            $http.delete('/api/studentinroom/deleteOne?StudentID=' + studentID)
+                .then(function (response) {
+                    // Handle success, for example, log the response
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    // Handle error, for example, log the error
+                    console.error('Error deleting student:', error.data);
+                });
+        };
+    });
+</script>
+
+<div class="wrapper" ng-app="myApp" ng-controller="StudentInRoomController">
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">Student In Room Table</h3>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Name</th>
+                            <th>Room</th>
+                            <th>Building</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="sir in studentinrooms">
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ sir.StudentName }}</td>
+                            <td>{{ sir.RoomName }}</td>
+                            <td>{{ sir.BuildingId }}</td>
+                            <td class="d-flex flex-column justify-content-between align-items-center">
+                                <button style="width: 70px;"
+                                        type="button"
+                                        class="btn btn-xs btn-danger mb-1"
+                                        ng-click="setWantToDeleteStudentID(sir.StudentID)"
+                                        data-toggle="modal"
+                                        data-target="#ConfirmDeleteModal">
+                                    <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                </button>
+                                <button style="width: 70px;"
+                                        type="button"
+                                        class="btn btn-xs btn-info"
+                                        ng-click="openModal(sir.StudentID)"
+                                        data-toggle="modal"
+                                        data-target="#StudentDetailsModal">
+                                    <i class="fa fa-eye" aria-hidden="true"></i> Read
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="card-footer clearfix">
+                    <!--
+                    Pagination
+                    total-items (int) = Số lượng bản ghi cần hiển thị
+                    ng-model (int) = Chỉ số của trang hiện tại trong các trang từ 1 tới total-items
+                    items-per-page (int) = Số các bản ghi hiển trị trên 1 trang, các bản ghi còn lại nằm ở trang khác
+                    -->
+                    <ul uib-pagination total-items="totalItems" ng-model="currentPage" items-per-page="itemsPerPage" boundary-links="true" rotate="false"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal-->
+
+    <div id="StudentDetailsModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Student Details</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form ng-submit="">
+                        <dl class="row">
+                            <dt class="col-sm-4">Student ID:</dt>
+                            <dd class="col-sm-8">{{studentDetails.StudentID}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Student Name:</dt>
+                            <dd class="col-sm-8">{{studentDetails.StudentName}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Username:</dt>
+                            <dd class="col-sm-8">{{studentDetails.Username}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Gender:</dt>
+                            <dd class="col-sm-8">{{studentDetails.Gender}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Date of Birth:</dt>
+                            <dd class="col-sm-8">{{studentDetails.DOB | date:'yyyy-MM-dd'}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Phone Number:</dt>
+                            <dd class="col-sm-8">{{studentDetails.PhoneNumber}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Religion:</dt>
+                            <dd class="col-sm-8">{{studentDetails.Religion}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Academic Year:</dt>
+                            <dd class="col-sm-8">{{studentDetails.AcademicYear}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Major:</dt>
+                            <dd class="col-sm-8">{{studentDetails.Major}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-4">Personal ID:</dt>
+                            <dd class="col-sm-8">{{studentDetails.PersonalID}}</dd>
+                        </dl>
+                        <!-- Add other properties as needed -->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex flex-col w-100 justify-content-between align-items-center">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ConfirmDeleteModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirm Delete</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>StudentID = <strong>{{WantToDeleteStudentID}}</strong>?</p>
+                    <p>Are you sure when to delete this student</p>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex flex-col w-100 justify-content-between align-items-center">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button"
+                                class="btn btn-success"
+                                data-dismiss="modal"
+                                ng-click="deleteStudentInRoom(WantToDeleteStudentID)">
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+

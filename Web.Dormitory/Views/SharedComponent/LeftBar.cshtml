@@ -1,0 +1,99 @@
+﻿@using Microsoft.AspNet.Identity
+
+@{
+    var isLogin = Request.IsAuthenticated;
+}
+
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <a href="/Dashboard" class="brand-link">
+        <img src="~/Asset/Image/dormitory.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text font-weight-light">Dormitory MS</span>
+    </a>
+    <div class="sidebar">
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="~/Asset/Image/user.png" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                @if (!isLogin)
+                {
+                    <a href="#" class="d-block">Guest</a>
+                }
+                @if (User.IsInRole("Admin") && isLogin)
+                {
+                    <a href="#" class="d-block">Admin</a>
+                }
+                @if (User.IsInRole("Student") && isLogin)
+                {
+                    <a href="#" class="d-block">Student</a>
+                }
+                @if (User.IsInRole("Manager") && isLogin)
+                {
+                    <a href="#" class="d-block">Manager</a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu">
+
+        @if (User.IsInRole("Admin") && isLogin)
+        {
+            <li class="nav-item">
+                <a href="/Role" class="nav-link">
+                    <i class="nav-icon fas fa-user"></i>
+                    <p>Role</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/Booking" class="nav-link">
+                    <i class="nav-icon fas fa-bed"></i>
+                    <p>Booking</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/StudentInRoom" class="nav-link">
+                    <i class="nav-icon fas fa-user"></i>
+                    <p>StudentInRoom</p>
+                </a>
+            </li>
+        }
+
+        @if (User.IsInRole("Manager") && isLogin)
+        {
+            <li class="nav-item">
+                <a href="/Booking" class="nav-link">
+                    <i class="nav-icon fas fa-bed"></i>
+                    <p>Booking</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/StudentInRoom" class="nav-link">
+                    <i class="nav-icon fas fa-user"></i>
+                    <p>StudentInRoom</p>
+                </a>
+            </li>
+        }
+
+        @if (User.IsInRole("Student") && isLogin)
+        {
+            <li class="nav-item">
+                <a href="/Registration" class="nav-link">
+                    <i class="nav-icon fas fa-user-plus"></i>
+                    <p>Registration</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/Roommate" class="nav-link">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Roommate</p>
+                </a>
+            </li>
+        }
+    </ul>
+
+</aside>
